@@ -25,6 +25,7 @@
 [image6]: ./misc_images/theta2.png
 [image7]: ./misc_images/theta2_top.png
 [image8]: ./misc_images/theta3.png
+[image9]: ./misc_images/chart.png
 
 
 ## [Rubric](https://review.udacity.com/#!/rubrics/972/view) Points
@@ -141,11 +142,11 @@ $$T_{5,6} =
  
 The input into the system is the roll, pitch, and yaw of the end effector. We will transform the rotations about the end effector into the total rotation required from the origin of our robot. Here is the coordinate frame of our system:
 
-![alt text][image3]
+![Frame of Reference at Origin][image3]
 
 and here is the coordinate frame of the end effector:
 
-![alt text][image4]
+![Frame of Reference at End Effector][image4]
  
  To transform the orientation of our world frame into that of the input end effector rotations, we need to rotate 180 degrees about the z axis to get the coordinate frames equivalent. Additionally, a rotation of -90 degrees about the y axis is required from the base revolute joint such that the normal is in the direction of the end effector frame. We call this matrix $$R_{corr}$$.
  
@@ -212,14 +213,14 @@ and here is the coordinate frame of the end effector:
 
 We solve the inverse kinematics problem by considering the first three joints as those that resolve the place the wrist center in the correct position and the last three joints are those that specify the orientation of the end effector. We will start by solving for theta1, which happens to be the only joint to provide any rotation about the z axis. We start by taking a top-down view of the robot in order to calculate the required rotation about z in order to calculate theta1.
 
-![alt text][image5]
+![Top-down view of Joint1 and the Wrist Center][image5]
 
 From here it is easy to solve for theta1.
 $$theta_{1} = tan^{-1}(\frac{WC_{y}}{WC_{x}})$$
 
 Next up, we move to theta2 and we will start with a side-view.
 
-![alt text][image6]
+![Side View of Joint2][image6]
 
 From this drawing we can see that
 $$theta_{2} = pi/2 - phi_{1} - angle_a$$
@@ -243,7 +244,7 @@ $$r2 = WC_{z} - 0.75$$
 
 to solve for B and r1 requires we return to the top view.
 
-![alt text][image7]
+![Top-down View of Joint2][image7]
 
 In this coordinate frame we see that r1 is now the remaining distance to the wrist center from joint1 once the length of a1 has been subtracted.
 
@@ -254,7 +255,7 @@ and now all required elements to solve for theta2 have been resolved.
 
 We advance to joint3 to solve for theta3 in a similar manner.
 
-![alt text][image8]
+![View of Joint3][image8]
 
 From this drawing we can see that
 $$theta_{2} = \frac{pi}{2} - phi_{3}$$
@@ -324,11 +325,12 @@ and all angles have now been resolved. The inverse kinematics problem is complet
 
 
 The result of this implementation was 8/10 successes. These results can be seen in the following two images.
-![alt text][image1]
-![alt text][image2]
+![Gazebo primary view taken at the end of 10 cycles][image1]
+![Gazebo top-down view of the bin at the end of 10 cycles][image2]
 
 The first image shows a target object that has fallen on its side and the second image shows one target object not in the bin. The reason behind the second failure is that the robot did not account for the length of the target while orienting into the bin. The result was that the target hit the side of the bin during one of the manuevers moving the bin and the target fell to the ground. The first failure was a similar result. The arm hit the target during orientation - before the grasping stage. Both of these could be accounted for but are difficult to consider in this scenario where we are given the required pose but not the contextual information such as "am I already holding the target". 
 
-
+In many samples, the total end effector error is very near zero but the error does extend as high as 0.6 units. There was no obvious primary contributor to the error. Below is a chart showing the error in each dimension for each pose over the course of two captures.
+![End effector errors per pose][image9]
 
 
