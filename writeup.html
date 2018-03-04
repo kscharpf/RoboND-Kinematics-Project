@@ -1,0 +1,896 @@
+<!DOCTYPE HTML>
+<html>
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Made with Remarkable!
+  </title>
+  <link href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.1/styles/github.min.css" rel="stylesheet"/>
+  <style type="text/css">
+   body,table tr{background-color:#fff}table tr td,table tr th{border:1px solid #ccc;text-align:left;padding:6px 13px;margin:0}pre code,table,table tr{padding:0}hr,pre code{background:0 0}body{font:16px Helvetica,Arial,sans-serif;line-height:1.4;color:#333;word-wrap:break-word;padding:10px 15px}strong,table tr th{font-weight:700}h1{font-size:2em;margin:.67em 0;text-align:center}h2{font-size:1.75em}h3{font-size:1.5em}h4{font-size:1.25em}h1,h2,h3,h4,h5,h6{font-weight:700;position:relative;margin-top:15px;margin-bottom:15px;line-height:1.1}h1,h2{border-bottom:1px solid #eee}hr{height:0;margin:15px 0;overflow:hidden;border:0;border-bottom:1px solid #ddd}a{color:#4183C4}a.absent{color:#c00}ol,ul{padding-left:15px;margin-left:5px}ol{list-style-type:lower-roman}table tr{border-top:1px solid #ccc;margin:0}table tr:nth-child(2n){background-color:#aaa}table tr td :first-child,table tr th :first-child{margin-top:0}table tr td:last-child,table tr th :last-child{margin-bottom:0}img{max-width:100%}blockquote{padding:0 15px;border-left:4px solid #ccc}code,tt{margin:0 2px;padding:0 5px;white-space:nowrap;border:1px solid #eaeaea;background-color:#f8f8f8;border-radius:3px}pre code{margin:0;white-space:pre;border:none}.highlight pre,pre{background-color:#f8f8f8;border:1px solid #ccc;font-size:13px;line-height:19px;overflow:auto;padding:6px 10px;border-radius:3px}
+  </style>
+ </head>
+ <body>
+  <h2 id="project-kinematics-pick-place">
+   Project: Kinematics Pick &amp; Place
+  </h2>
+  <h3 id="writeup-template-you-can-use-this-file-as-a-template-for-your-writeup-if-you-want-to-submit-it-as-a-markdown-file-but-feel-free-to-use-some-other-method-and-submit-a-pdf-if-you-prefer">
+   Writeup Template: You can use this file as a template for your writeup if you want to submit it as a markdown file, but feel free to use some other method and submit a pdf if you prefer.
+  </h3>
+  <hr/>
+  <p>
+   <strong>
+    Steps to complete the project:
+   </strong>
+  </p>
+  <ol>
+   <li>
+    Set up your ROS Workspace.
+   </li>
+   <li>
+    Download or clone the
+    <a href="https://github.com/udacity/RoboND-Kinematics-Project">
+     project repository
+    </a>
+    into the
+    <strong>
+     <em>
+      src
+     </em>
+    </strong>
+    directory of your ROS Workspace.
+   </li>
+   <li>
+    Experiment with the forward_kinematics environment and get familiar with the robot.
+   </li>
+   <li>
+    Launch in
+    <a href="https://classroom.udacity.com/nanodegrees/nd209/parts/7b2fd2d7-e181-401e-977a-6158c77bf816/modules/8855de3f-2897-46c3-a805-628b5ecf045b/lessons/91d017b1-4493-4522-ad52-04a74a01094c/concepts/ae64bb91-e8c4-44c9-adbe-798e8f688193">
+     demo mode
+    </a>
+    .
+   </li>
+   <li>
+    Perform Kinematic Analysis for the robot following the
+    <a href="https://review.udacity.com/#!/rubrics/972/view">
+     project rubric
+    </a>
+    .
+   </li>
+   <li>
+    Fill in the
+    <code>
+     IK_server.py
+    </code>
+    with your Inverse Kinematics code.
+   </li>
+  </ol>
+  <h2 id="rubric-points">
+   <a href="https://review.udacity.com/#!/rubrics/972/view">
+    Rubric
+   </a>
+   Points
+  </h2>
+  <h3 id="here-i-will-consider-the-rubric-points-individually-and-describe-how-i-addressed-each-point-in-my-implementation">
+   Here I will consider the rubric points individually and describe how I addressed each point in my implementation.
+  </h3>
+  <hr/>
+  <h3 id="writeup-readme">
+   Writeup / README
+  </h3>
+  <h4 id="1-provide-a-writeup-readme-that-includes-all-the-rubric-points-and-how-you-addressed-each-one-you-can-submit-your-writeup-as-markdown-or-pdf">
+   1. Provide a Writeup / README that includes all the rubric points and how you addressed each one.  You can submit your writeup as markdown or pdf.
+  </h4>
+  <p>
+   You’re reading it!
+  </p>
+  <h3 id="kinematic-analysis">
+   Kinematic Analysis
+  </h3>
+  <h4 id="1-run-the-forward_kinematics-demo-and-evaluate-the-kr210urdfxacro-file-to-perform-kinematic-analysis-of-kuka-kr210-robot-and-derive-its-dh-parameters">
+   1. Run the forward_kinematics demo and evaluate the kr210.urdf.xacro file to perform kinematic analysis of Kuka KR210 robot and derive its DH parameters.
+  </h4>
+  <p>
+   We follow the rules for generating the DH parameters. The urdf indicates joint1 has a z offset of 0.33 and joint2 has a z offset of 0.42 and an x offset of 0.35. We move the joint1 origin to the accumulated z to provide a d1 of 0.75. We then twist the joint -90deg and translate 0.35 along the x axis resulting in alpha1=-pi/2 and a1=0.35, d2=0. We translate along the z axis 1.25 to reach joint3 with no rotation. Joints 4,5,6 are will have a coincident origin as they form the spherical wrist. We rotate -pi/2 to orient in the joint4 configuration and apply a translation of 0.96 + 0.54 for d4 and a3 has an offset of -0.054. A twist of +pi/2 moves from joint4 to joint5. A final twist of -pi/2 moves from joint5 to joint6. Finally, the end effector has d7 of 0.193 + 0.11 or 0.303 from the urdf.
+  </p>
+  <h4 id="2-using-the-dh-parameter-table-you-derived-earlier-create-individual-transformation-matrices-about-each-joint-in-addition-also-generate-a-generalized-homogeneous-transform-between-base_link-and-gripper_link-using-only-end-effectorgripper-pose">
+   2. Using the DH parameter table you derived earlier, create individual transformation matrices about each joint. In addition, also generate a generalized homogeneous transform between base_link and gripper_link using only end-effector(gripper) pose.
+  </h4>
+  <table>
+   <thead>
+    <tr>
+     <th>
+      Links
+     </th>
+     <th>
+      alpha(i-1)
+     </th>
+     <th>
+      a(i-1)
+     </th>
+     <th>
+      d(i-1)
+     </th>
+     <th>
+      theta(i)
+     </th>
+    </tr>
+   </thead>
+   <tbody>
+    <tr>
+     <td>
+      0-&gt;1
+     </td>
+     <td>
+      0
+     </td>
+     <td>
+      0
+     </td>
+     <td>
+      0.75
+     </td>
+     <td>
+      0
+     </td>
+    </tr>
+    <tr>
+     <td>
+      1-&gt;2
+     </td>
+     <td>
+      - pi/2
+     </td>
+     <td>
+      0.35
+     </td>
+     <td>
+      0
+     </td>
+     <td>
+      -pi/2 + q2
+     </td>
+    </tr>
+    <tr>
+     <td>
+      2-&gt;3
+     </td>
+     <td>
+      0
+     </td>
+     <td>
+      1.25
+     </td>
+     <td>
+      0
+     </td>
+     <td>
+      0
+     </td>
+    </tr>
+    <tr>
+     <td>
+      3-&gt;4
+     </td>
+     <td>
+      -pi/2
+     </td>
+     <td>
+      -0.054
+     </td>
+     <td>
+      1.50
+     </td>
+     <td>
+      0
+     </td>
+    </tr>
+    <tr>
+     <td>
+      4-&gt;5
+     </td>
+     <td>
+      pi/2
+     </td>
+     <td>
+      0
+     </td>
+     <td>
+      0
+     </td>
+     <td>
+      0
+     </td>
+    </tr>
+    <tr>
+     <td>
+      5-&gt;6
+     </td>
+     <td>
+      -pi/2
+     </td>
+     <td>
+      0
+     </td>
+     <td>
+      0
+     </td>
+     <td>
+      0
+     </td>
+    </tr>
+    <tr>
+     <td>
+      6-&gt;EE
+     </td>
+     <td>
+      0
+     </td>
+     <td>
+      0
+     </td>
+     <td>
+      0.303
+     </td>
+     <td>
+      0
+     </td>
+    </tr>
+   </tbody>
+  </table>
+  <p>
+   The generic transform looks like
+   <br/>
+   <mathjax>
+    $$T_{i-1,i} =
+ \begin{pmatrix}
+ cos(q_{i}) &amp; -sin(q_{i}) &amp; 0 &amp; a_{i-1} \\
+ sin(q_{i})cos(alpha_{i-1}) &amp; cos(q_{i})cos(alpha_{i-1}) &amp; -sin(alpha_{i-1}) &amp; -sin(alpha_{i-1})d_{i} \\
+ sin(q_{i})sin(alpha_{i-1}) &amp; cos(q_{i})sin(alpha_{i-1}) &amp; cos(alpha_{i-1}) &amp; cos(alpha_{i-1})d_{i} \\
+ 0 &amp; 0 &amp; 0 &amp; 1
+ \end{pmatrix}$$
+   </mathjax>
+  </p>
+  <p>
+   For the T
+   <sub>
+    0,1
+   </sub>
+   matrix we substitute alpha_
+   <sub>
+    0
+   </sub>
+   =0, a
+   <sub>
+    0
+   </sub>
+   =0,d
+   <sub>
+    1
+   </sub>
+   =0.75 noting that cos(0) = 1 and sin(0) = 0 yields
+  </p>
+  <p>
+   <mathjax>
+    $$T_{0,1} =
+ \begin{pmatrix}
+ cos(q1) &amp; -sin(q1) &amp; 0 &amp; 0 \\
+ sin(q1) &amp; cos(q1) &amp; 0 &amp; 0 \\
+ 0 &amp; 0 &amp; 1 &amp; 0.75 \\
+ 0 &amp; 0 &amp; 0 &amp; 1
+ \end{pmatrix}$$
+   </mathjax>
+  </p>
+  <p>
+   For the T
+   <sub>
+    1,2
+   </sub>
+   matrix we substitute alpha
+   <sub>
+    1
+   </sub>
+   =-pi/2, a
+   <sub>
+    1
+   </sub>
+   =0.35,d
+   <sub>
+    2
+   </sub>
+   =0 noting that cos(-pi/2) = 0 and sin(-pi/2) = -1 yields
+  </p>
+  <p>
+   <mathjax>
+    $$T_{1,2} =
+ \begin{pmatrix}
+ cos(q2) &amp; -sin(q2) &amp; 0 &amp; 0.35 \\
+ 0 &amp; 0 &amp; 1 &amp; 0 \\
+ -sin(q2) &amp; -cos(q2) &amp; 0 &amp; 0 \\
+ 0 &amp; 0 &amp; 0 &amp; 1
+ \end{pmatrix}$$
+   </mathjax>
+  </p>
+  <p>
+   For the T
+   <sub>
+    2,3
+   </sub>
+   matrix we substitute alpha
+   <sub>
+    2
+   </sub>
+   =-0, a
+   <sub>
+    2
+   </sub>
+   =1.25,d
+   <sub>
+    3
+   </sub>
+   =0 noting that cos(0) = 1 and sin(0) = 0 yields
+  </p>
+  <p>
+   <mathjax>
+    $$T_{2,3} =
+ \begin{pmatrix}
+ cos(q3) &amp; -sin(q3) &amp; 0 &amp; 1.25 \\
+ sin(q3) &amp; cos(q3) &amp; 0 &amp; 0 \\
+ 0 &amp; 0 &amp; 1 &amp; 0 \\
+ 0 &amp; 0 &amp; 0 &amp; 1
+ \end{pmatrix}$$
+   </mathjax>
+  </p>
+  <p>
+   For the T
+   <sub>
+    3,4
+   </sub>
+   matrix we substitute alpha
+   <sub>
+    3
+   </sub>
+   =-pi/2, a
+   <sub>
+    3
+   </sub>
+   =-0.054,d
+   <sub>
+    4
+   </sub>
+   =1.50 noting that cos(-pi/2) = 0 and sin(-pi/2) = -1 yields
+  </p>
+  <p>
+   <mathjax>
+    $$T_{3,4} =
+ \begin{pmatrix}
+ cos(q4) &amp; -sin(q4) &amp; 0 &amp; -0.054 \\
+ 0 &amp; 0 &amp; 1 &amp; 1.50 \\
+ -sin(q4) &amp; -cos(q4) &amp; 0 &amp; 0 \\
+ 0 &amp; 0 &amp; 0 &amp; 1
+ \end{pmatrix}$$
+   </mathjax>
+  </p>
+  <p>
+   For the T
+   <sub>
+    4,5
+   </sub>
+   matrix we substitute alpha
+   <sub>
+    4
+   </sub>
+   =pi/2, a
+   <sub>
+    4
+   </sub>
+   =0,d
+   <sub>
+    5
+   </sub>
+   =0 noting that cos(pi/2) = 0 and sin(pi/2) = 1 yields
+  </p>
+  <p>
+   <mathjax>
+    $$T_{4,5} =
+ \begin{pmatrix}
+ cos(q5) &amp; -sin(q5) &amp; 0 &amp; 0 \\
+ 0 &amp; 0 &amp; -1 &amp; 0 \\
+ sin(q5) &amp; cos(q5) &amp; 0 &amp; 0 \\
+ 0 &amp; 0 &amp; 0 &amp; 1
+ \end{pmatrix}$$
+   </mathjax>
+  </p>
+  <p>
+   For the T
+   <sub>
+    5,6
+   </sub>
+   matrix we substitute alpha
+   <sub>
+    5
+   </sub>
+   =-pi/2, a
+   <sub>
+    5
+   </sub>
+   =0,d
+   <sub>
+    6
+   </sub>
+   =0 noting that cos(-pi/2) = 0 and sin(-pi/2) = -1 yields
+  </p>
+  <p>
+   <mathjax>
+    $$T_{5,6} =
+ \begin{pmatrix}
+ cos(q6) &amp; -sin(q6) &amp; 0 &amp; 0 \\
+ 0 &amp; 0 &amp; 1 &amp; 0 \\
+ -sin(q6) &amp; -cos(q6) &amp; 0 &amp; 0 \\
+ 0 &amp; 0 &amp; 0 &amp; 1
+ \end{pmatrix}$$
+   </mathjax>
+  </p>
+  <p>
+   For the T
+   <sub>
+    6,G
+   </sub>
+   matrix we substitute alpha
+   <sub>
+    6
+   </sub>
+   = 0, a
+   <sub>
+    6
+   </sub>
+   =0,d
+   <sub>
+    7
+   </sub>
+   =0.303 noting that cos(0) = 1 and sin(0) = 0 yields
+  </p>
+  <p>
+   <mathjax>
+    $$T_{6,G} =
+ \begin{pmatrix}
+ cos(q7) &amp; -sin(q7) &amp; 0 &amp; 0 \\
+ sin(q7) &amp; cos(q7) &amp; 0 &amp; 0 \\
+ 0 &amp; 0 &amp; 1 &amp; 0.303 \\
+ 0 &amp; 0 &amp; 0 &amp; 1
+ \end{pmatrix}$$
+   </mathjax>
+  </p>
+  <p>
+   The transform from the base link to the end effector is then
+   <br/>
+   <mathjax>
+    $$T_{0,G} = T_{0,1}T_{1,2}T_{2,3}T_{3,4}T_{4,5}T_{5,6}T_{6,G}$$
+   </mathjax>
+  </p>
+  <p>
+   The input into the system is the roll, pitch, and yaw of the end effector. We will transform the rotations about the end effector into the total rotation required from the origin of our robot. Here is the coordinate frame of our system:
+  </p>
+  <p>
+   <img alt="alt text" src="./misc_images/origin_frame.png"/>
+  </p>
+  <p>
+   and here is the coordinate frame of the end effector:
+  </p>
+  <p>
+   <img alt="alt text" src="./misc_images/ee_frame.png"/>
+  </p>
+  <p>
+   To transform the orientation of our world frame into that of the input end effector rotations, we need to rotate 180 degrees about the z axis to get the coordinate frames equivalent. Additionally, a rotation of -90 degrees about the y axis is required from the base revolute joint such that the normal is in the direction of the end effector frame. We call this matrix
+   <mathjax>
+    $$R_{corr}$$
+   </mathjax>
+   .
+  </p>
+  <p>
+   We define a sequence of extrinsic rotations in order to calculate the end effector rotation.
+   <br/>
+   <mathjax>
+    $$R_{EE} = R_{z}R_{y}R_{x}R_{corr}$$
+   </mathjax>
+  </p>
+  <p>
+   The rotations about
+   <mathjax>
+    $$R_{z}, R_{y}, and R_{z}$$
+   </mathjax>
+   are by the book and are:
+  </p>
+  <p>
+   <mathjax>
+    $$R_{x} = 
+  \begin{pmatrix}
+ 1 &amp; 0 &amp; 0 \\
+ 0 &amp; cos(r) &amp; -sin(r) \\
+0 &amp; sin(r) &amp; cos(r) 
+ \end{pmatrix}$$
+   </mathjax>
+   <br/>
+   where
+   <em>
+    r
+   </em>
+   is the input roll.
+  </p>
+  <p>
+   <mathjax>
+    $$R_{y} = 
+  \begin{pmatrix}
+ cos(p) &amp; 0 &amp; sin(p) \\
+ 0 &amp; 1 &amp; 0 \\
+-sin(p) &amp; 0 &amp; cos(p) 
+ \end{pmatrix}$$
+   </mathjax>
+   <br/>
+   where
+   <em>
+    p
+   </em>
+   is the input pitch.
+  </p>
+  <p>
+   <mathjax>
+    $$R_{z} = 
+ \begin{pmatrix}
+ cos(y) &amp; -sin(y) &amp; 0 \\
+ sin(y) &amp; cos(y) &amp; 0 \\
+ 0 &amp; 0 &amp; 1
+ \end{pmatrix}$$
+   </mathjax>
+   <br/>
+   where
+   <em>
+    y
+   </em>
+   is the input yaw.
+  </p>
+  <p>
+   <mathjax>
+    $$R_{corr} = R_{z,y=180deg} R_{y,p=-90deg}$$
+   </mathjax>
+   <br/>
+   <mathjax>
+    $$R_{z,y=180deg} = 
+ \begin{pmatrix}
+ -1 &amp; 0 &amp; 0 \\
+ 0 &amp; -1 &amp; 0 \\
+ 0 &amp; 0 &amp; 1
+ \end{pmatrix}$$
+   </mathjax>
+  </p>
+  <p>
+   <mathjax>
+    $$R_{y,p=-90deg} = 
+ \begin{pmatrix}
+ 0 &amp; 0 &amp; -1 \\
+ 0 &amp; 1 &amp; 0 \\
+ 1 &amp; 0 &amp; 0
+ \end{pmatrix}$$
+   </mathjax>
+  </p>
+  <p>
+   <mathjax>
+    $$R_{corr} =
+ \begin{pmatrix}
+ 0 &amp; 0 &amp; 1 \\
+ 0 &amp; -1 &amp; 0 \\
+ 1 &amp; 0 &amp; 0 
+ \end{pmatrix}$$
+   </mathjax>
+  </p>
+  <p>
+   at this point we have
+   <mathjax>
+    $$R_{EE}$$
+   </mathjax>
+   in the world coordinates and the end effector position is also part of the input. Given the rotation of the end effector and the length of the end effector, we can now define the coordinates of the wrist center (WC). Lesson 15 defines the wrist center equations as
+   <br/>
+   <mathjax>
+    $$wc_{x} = p_{x} - (d_{6} + l)n_{x}$$
+   </mathjax>
+   <br/>
+   <mathjax>
+    $$wc_{y} = p_{y} - (d_{6} + l)n_{y}$$
+   </mathjax>
+   <br/>
+   <mathjax>
+    $$wc_{z} = p_{z} - (d_{6} + l)n_{z}$$
+   </mathjax>
+  </p>
+  <p>
+   where the
+   <strong>
+    n
+   </strong>
+   vector may be extracted from the just calculated
+   <mathjax>
+    $$R_{EE}$$
+   </mathjax>
+   to give the resulting
+   <strong>
+    WC
+   </strong>
+   position vector.
+  </p>
+  <h4 id="3-decouple-inverse-kinematics-problem-into-inverse-position-kinematics-and-inverse-orientation-kinematics-doing-so-derive-the-equations-to-calculate-all-individual-joint-angles">
+   3. Decouple Inverse Kinematics problem into Inverse Position Kinematics and inverse Orientation Kinematics; doing so derive the equations to calculate all individual joint angles.
+  </h4>
+  <p>
+   We solve the inverse kinematics problem by considering the first three joints as those that resolve the place the wrist center in the correct position and the last three joints are those that specify the orientation of the end effector. We will start by solving for theta1, which happens to be the only joint to provide any rotation about the z axis. We start by taking a top-down view of the robot in order to calculate the required rotation about z in order to calculate theta1.
+  </p>
+  <p>
+   <img alt="alt text" src="./misc_images/theta1.png"/>
+  </p>
+  <p>
+   From here it is easy to solve for theta1.
+   <br/>
+   <mathjax>
+    $$theta_{1} = tan^{-1}(\frac{WC_{y}}{WC_{x}})$$
+   </mathjax>
+  </p>
+  <p>
+   Next up, we move to theta2 and we will start with a side-view.
+  </p>
+  <p>
+   <img alt="alt text" src="./misc_images/theta2.png"/>
+  </p>
+  <p>
+   From this drawing we can see that
+   <br/>
+   <mathjax>
+    $$theta_{2} = pi/2 - phi_{1} - angle_a$$
+   </mathjax>
+  </p>
+  <p>
+   Furthermore we can see that
+   <br/>
+   <mathjax>
+    $$phi_1 = tan^{-1}(\frac{r2}{r1})$$
+   </mathjax>
+   <br/>
+   and from the law of cosines
+   <br/>
+   <mathjax>
+    $$angle_a = cos^{-1}(\frac{B^2 + C^2 - A^2}{2BC})$$
+   </mathjax>
+  </p>
+  <p>
+   Some of these components are immediately solvable:
+   <br/>
+   <mathjax>
+    $$C = length_{J2 to J3}$$
+   </mathjax>
+   <br/>
+   and extracted from the DH table is
+   <br/>
+   <mathjax>
+    $$C = 1.25$$
+   </mathjax>
+  </p>
+  <p>
+   <mathjax>
+    $$A = length_{J3 to WC}$$
+   </mathjax>
+   <br/>
+   <mathjax>
+    $$A = \sqrt{(-0.054)^{2} + 1.50^{2}}$$
+   </mathjax>
+   <br/>
+   <mathjax>
+    $$A ~= 1.501$$
+   </mathjax>
+  </p>
+  <p>
+   <mathjax>
+    $$r2 = WC_{z} - d_{1}$$
+   </mathjax>
+   <br/>
+   <mathjax>
+    $$r2 = WC_{z} - 0.75$$
+   </mathjax>
+  </p>
+  <p>
+   to solve for B and r1 requires we return to the top view.
+  </p>
+  <p>
+   <img alt="alt text" src="./misc_images/theta2_top.png"/>
+  </p>
+  <p>
+   In this coordinate frame we see that r1 is now the remaining distance to the wrist center from joint1 once the length of a1 has been subtracted.
+  </p>
+  <p>
+   <mathjax>
+    $$r1 = \sqrt{WC_{y}^2 + WC_{x}^2} - a1$$
+   </mathjax>
+   <br/>
+   <mathjax>
+    $$B = \sqrt{r1^2 + r2^2}$$
+   </mathjax>
+  </p>
+  <p>
+   and now all required elements to solve for theta2 have been resolved.
+  </p>
+  <p>
+   We advance to joint3 to solve for theta3 in a similar manner.
+  </p>
+  <p>
+   <img alt="alt text" src="./misc_images/theta3.png"/>
+  </p>
+  <p>
+   From this drawing we can see that
+   <br/>
+   <mathjax>
+    $$theta_{2} = \frac{pi}{2} - phi_{3}$$
+   </mathjax>
+  </p>
+  <p>
+   meanwhile we can see that
+   <br/>
+   <mathjax>
+    $$pi = phi_{3} + psi_{3} + angle_{b}$$
+   </mathjax>
+   <br/>
+   or
+   <br/>
+   <mathjax>
+    $$phi_{3} = pi - psi_{3} - angle_{b}$$
+   </mathjax>
+   <br/>
+   and
+   <br/>
+   <mathjax>
+    $$psi_{3} = sin^{-1}(\frac{d4}{A})$$
+   </mathjax>
+   <br/>
+   where d4 is from the table and A was previously resolved.
+   <br/>
+   <mathjax>
+    $$psi_{3} = sin^{-1}(\frac{0.054}{1.501})$$
+   </mathjax>
+   <br/>
+   resulting in
+   <br/>
+   <mathjax>
+    $$psi_{3} ~= 0.36$$
+   </mathjax>
+  </p>
+  <p>
+   We an solve angle_b from the law of cosines
+   <br/>
+   <mathjax>
+    $$angle_{b} = cos^{-1}(\frac{A^2+C^2 - B^2}{2AC})$$
+   </mathjax>
+   <br/>
+   and all unknowns are now resolved for theta3. However, the sign of theta3 needs to be inverted to reflect the negative rotation. This completes the inverse kinematics code for position determination.
+  </p>
+  <p>
+   We now move to the inverse kinematics of the orientation of the spherical wrist. First, we already have the total orientation required and we know the orientation applied to the end effector by the first three joints. So, we will first solve for the required orientation applied by the spherical wrist alone.
+   <br/>
+   <mathjax>
+    $$R_{3,6} = R_{0,3}^{-1}R_{EE}$$
+   </mathjax>
+   <br/>
+   where
+   <br/>
+   <mathjax>
+    $$R_{0,3} = T_{0,1;q1=theta1}T_{1,2;q2=theta2}T_{2,3;q3=theta3}$$
+   </mathjax>
+   <br/>
+   Here we just applied the homogenous transforms using the solved rotational angles for the first three joints to find the total orientation contribution of the first three joints. Therefore, we have also found the total orientation contribution required by the last three joints and the problem is to now solve for the angles on each of the last three joints.
+  </p>
+  <p>
+   The transform from joint3 to the wrist center is:
+   <br/>
+   <mathjax>
+    $$T_{3,6} = T_{3,4}T_{4,5}T_{5,6}$$
+   </mathjax>
+   <br/>
+   to make the matrix multiplications less daunting we will write “c4” to mean cos(theta4) and “s4” to mean sin(theta4).
+   <br/>
+   <mathjax>
+    $$T_{3,6} = T_{3,5}T_{3,6}$$
+   </mathjax>
+   <br/>
+   <mathjax>
+    $$T_{3,5} = T_{3,4}T_4{,5}$$
+   </mathjax>
+   <br/>
+   <mathjax>
+    $$T_{3,5} = 
+\begin{pmatrix}
+c4c5 &amp; -c4s5 &amp; s4 \\
+s5 &amp; c5 &amp; 0 \\
+-s4c5 &amp; s4s5 &amp; c4 
+\end{pmatrix}$$
+   </mathjax>
+   <br/>
+   <mathjax>
+    $$T_{3,6} = 
+\begin{pmatrix}
+c4c5c6 - s4s6 &amp; -c4c5s6 - s4c6 &amp; -c4s5 \\
+s5c6 &amp; -s5s6 &amp; c5 \\
+-s4c5s6 - c4s6 &amp; s4c5s6 - c4c6 &amp; s4s5
+\end{pmatrix}$$
+   </mathjax>
+  </p>
+  <p>
+   theta5 could be easily plucked out of the T3_6[1,2] entry but the guidance is to use the tangent allowing for the specification of quadrants. Observe:
+   <br/>
+   <mathjax>
+    $$(-c4s5)^2 = R_{3,6}[0,2]^2$$
+   </mathjax>
+   <br/>
+   <mathjax>
+    $$(-s4s5)^2 = R_{3,6}[2,2]^2$$
+   </mathjax>
+   <br/>
+   then
+   <br/>
+   <mathjax>
+    $$c4^2s5^2 + s4^2s5^2 = R_{3,6}[0,2]^2 + R_{3,6}[2,2]^2$$
+   </mathjax>
+   <br/>
+   <mathjax>
+    $$s5^2(c4^2+s4^2) = R_{3,6][0,2]^2 + R_{3,6][2,2]^2$$
+   </mathjax>
+   <br/>
+   <mathjax>
+    $$s5 = \sqrt{R_{3,6}[0,2]^2 + R_{3,6}[2,2]^2}$$
+   </mathjax>
+   <br/>
+   leading to
+   <br/>
+   <mathjax>
+    $$theta5 = tan^{-1}(\frac{\sqrt{R_{3,6}[0,2]^2 + R_{3,6}[2,]^2}}{R_{3,6}[1,2]})$$
+   </mathjax>
+   <br/>
+   theta4 and theta6 are easier to resolve as
+   <br/>
+   <mathjax>
+    $$theta4 = tan^{-1}(\frac{R_{3,6}[2,2]}{-R_{3,6}[0,2]})$$
+   </mathjax>
+   <br/>
+   <mathjax>
+    $$theta6 = tan^{-1}(\frac{-R_{3,6}[1,1]}{R_{3,6}[1,0]})$$
+   </mathjax>
+  </p>
+  <p>
+   and all angles have now been resolved. The inverse kinematics problem is complete.
+  </p>
+  <h3 id="project-implementation">
+   Project Implementation
+  </h3>
+  <h4 id="1-fill-in-the-ik_serverpy-file-with-properly-commented-python-code-for-calculating-inverse-kinematics-based-on-previously-performed-kinematic-analysis-your-code-must-guide-the-robot-to-successfully-complete-810-pick-and-place-cycles-briefly-discuss-the-code-you-implemented-and-your-results">
+   1. Fill in the
+   <code>
+    IK_server.py
+   </code>
+   file with properly commented python code for calculating Inverse Kinematics based on previously performed Kinematic Analysis. Your code must guide the robot to successfully complete 8/10 pick and place cycles. Briefly discuss the code you implemented and your results.
+  </h4>
+  <p>
+   The result of this implementation was 8/10 successes. These results can be seen in the following two images.
+   <br/>
+   <img alt="alt text" src="./misc_images/side_view.jpg"/>
+   <br/>
+   <img alt="alt text" src="./misc_images/top_view.jpg"/>
+  </p>
+  <p>
+   The first image shows a target object that has fallen on its side and the second image shows one target object not in the bin. The reason behind the second failure is that the robot did not account for the length of the target while orienting into the bin. The result was that the target hit the side of the bin during one of the manuevers moving the bin and the target fell to the ground. The first failure was a similar result. The arm hit the target during orientation - before the grasping stage. Both of these could be accounted for but are difficult to consider in this scenario where we are given the required pose but not the contextual information such as “am I already holding the target”.
+  </p>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.1/highlight.min.js">
+  </script>
+  <script>
+   hljs.initHighlightingOnLoad();
+  </script>
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript">
+  </script>
+  <script type="text/javascript">
+   MathJax.Hub.Config({"showProcessingMessages" : false,"messageStyle" : "none","tex2jax": { inlineMath: [ [ "$", "$" ] ] }});
+  </script>
+ </body>
+</html>
